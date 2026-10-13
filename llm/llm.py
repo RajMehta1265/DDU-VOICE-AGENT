@@ -825,20 +825,36 @@ class LLM:
                         if not clean_text.strip():
                             turn_lang, _, _ = self.detect_turn_language(user_text, fallback_lang=self.current_lang)
                             lower_u = user_text.lower()
-                            if any(w in lower_u for w in ["સેમેસ્ટર", "સેમ", "સિલેબસ", "અભ્યાસક્રમ", "વિષય", "semester", "syllabus", "subject"]):
+                            sem_detected = extract_semester(user_text)
+                            if any(w in lower_u for w in ["admission", "admissions", "eligible", "eligibility", "criteria", "એડમિશન", "પ્રવેશ", "પાત્રતા", "લાયકાત", "प्रवेश"]):
                                 if turn_lang == "gu":
-                                    clean_text = "ડીડીયુ આઈટી સેમેસ્ટર 1 માં મેથેમેટિક્સ-1, બેઝિક પ્રોગ્રામિંગ અને એન્જિનિયરિંગ ફાઉન્ડેશન વિષયો સામેલ છે. શું તમારે ચોક્કસ વિષય કે ક્રેડિટ વિશે વધુ જાણવું છે?"
+                                    clean_text = "ડીડીયુ બીટેક આઈટીમાં પ્રવેશ માટે ૧૨ સાયન્સ પીસીએમમાં ઓછામાં ઓછા ૬૦% ગુણ, ગુજકેટ પરીક્ષા અને એસીપીસી મેરિટ રેન્ક જરૂરી છે."
                                 elif turn_lang == "hi":
-                                    clean_text = "डीडीयू आईटी सेमेस्टर 1 में मैथमेटिक्स-1, प्रोग्रामिंग और इंजीनियरिंग विषय शामिल हैं। क्या आप किसी विशेष विषय या क्रेडिट के बारे में जानना चाहते हैं?"
+                                    clean_text = "डीडीयू बी.टेक आईटी में प्रवेश के लिए 12वीं साइंस पीसीएम में न्यूनतम 60% अंक, वैध गुजकेट स्कोर और एसीपीसी मेरिट रैंक आवश्यक है।"
                                 else:
-                                    clean_text = "DDU IT Semester 1 includes Mathematics-1, Basic Programming, and Engineering fundamentals. Would you like specific details on subjects or credits?"
-                            elif any(w in lower_u for w in ["fee", "fees", "ફી", "ખર્ચ", "फी", "फीस"]):
+                                    clean_text = "DDU B.Tech IT admission requires 12th Science PCM with minimum 60% aggregate, a valid GUJCET score, and ACPC merit counseling rank."
+                            elif any(w in lower_u for w in ["fee", "fees", "cost", "ફી", "ખર્ચ", "फी", "फीस"]):
                                 if turn_lang == "gu":
-                                    clean_text = "ડીડીયુ બીટેક પ્રથમ વર્ષની વાર્ષિક ટ્યુશન ફી ૧,૬૬,૯૫૦ રૂપિયા અને બીજાથી ચોથા વર્ષ માટે ૧,૫૨,૦૦૦ રૂપિયા છે, જ્યારે એમટેક પ્રથમ વર્ષની ફી ૫૫,૧૨૫ રૂપિયા છે."
+                                    clean_text = "ડીડીયુ બીટેક આઈટીમાં પ્રથમ વર્ષની ફી ૧,૬૬,૯૫૦ રૂપિયા અને બીજાથી ચોથા વર્ષ માટે વાર્ષિક ૧,૫૨,૦૦૦ રૂપિયા છે."
                                 elif turn_lang == "hi":
-                                    clean_text = "डीडीयू बी.टेक प्रथम वर्ष की वार्षिक ट्यूशन फीस 1,66,950 रुपये और 2nd से 4th वर्ष के लिए 1,52,000 रुपये है, जबकि एम.टेक प्रथम वर्ष की 55,125 रुपये है।"
+                                    clean_text = "डीडीयू बी.टेक आईटी में प्रथम वर्ष की फीस 1,66,950 रुपये और दूसरे से चौथे वर्ष के लिए 1,52,000 रुपये प्रति वर्ष है।"
                                 else:
-                                    clean_text = "DDU B.Tech first year annual fee is 1,66,950 rupees, and second to fourth year is 1,52,000 rupees per year. M.Tech first year is 55,125 rupees per year."
+                                    clean_text = "DDU B.Tech IT first year fee is 1,66,950 rupees and second to fourth year fee is 1,52,000 rupees per year."
+                            elif any(w in lower_u for w in ["gate", "ગેટ", "गेट"]):
+                                if turn_lang == "gu":
+                                    clean_text = "ડીડીયુ આઈટી અભ્યાસક્રમમાં ગેટના તમામ વિષયો જેમ કે મેથેમેટિક્સ, ડિજિટલ લોજિક, સીઓએ, ડેટા સ્ટ્રક્ચર્સ, એલ્ગોરિધમ્સ, ઓએસ, ડીબીએમએસ અને કમ્પ્યુટર નેટવર્ક્સ સંપૂર્ણપણે આવરી લેવામાં આવ્યા છે."
+                                elif turn_lang == "hi":
+                                    clean_text = "डीडीयू आईटी पाठ्यक्रम में गेट के सभी 12 विषय जैसे इंजीनियरिंग मैथमेटिक्स, डिजिटल लॉजिक, COA, डेटा स्ट्रक्चर्स, एल्गोरिदम, OS, DBMS और कंप्यूटर नेटवर्क शामिल हैं।"
+                                else:
+                                    clean_text = "DDU IT curriculum covers all 12 GATE subjects including Engineering Mathematics, Digital Logic, COA, Programming & Data Structures, Algorithms, OS, DBMS, and Networks."
+                            elif any(w in lower_u for w in ["સેમેસ્ટર", "સેમ", "સિલેબસ", "અભ્યાસક્રમ", "વિષય", "semester", "syllabus", "subject"]) or sem_detected:
+                                sem_target = sem_detected if sem_detected else 1
+                                if turn_lang == "gu":
+                                    clean_text = f"ડીડીયુ આઈટી સેમેસ્ટર {sem_target} નો સંપૂર્ણ અભ્યાસક્રમ ઉપલબ્ધ છે. શું તમારે ચોક્કસ વિષય વિશે જાણવું છે?"
+                                elif turn_lang == "hi":
+                                    clean_text = f"डीडीयू आईटी सेमेस्टर {sem_target} का संपूर्ण पाठ्यक्रम उपलब्ध है। क्या आप किसी विशेष विषय के बारे में जानना चाहते हैं?"
+                                else:
+                                    clean_text = f"DDU IT Semester {sem_target} full curriculum is available. Would you like details on specific subjects?"
                             elif any(w in lower_u for w in ["placement", "પ્લેસમેન્ટ", "प्लेसमेंट", "salary", "package"]):
                                 if turn_lang == "gu":
                                     clean_text = "ડીડીયુ આઈટીમાં સરેરાશ પેકેજ ૬ લાખ (6 LPA), સૌથી વધુ પેકેજ ૨૪ લાખ ઓફ-કેમ્પસ (24 LPA) છે અને ૨૦૦ વિદ્યાર્થીઓ પ્લેસ થયા છે. મુખ્ય રિક્રૂટર્સ TCS, Infosys, Crest Data Systems અને TatvaSoft છે."
@@ -848,11 +864,11 @@ class LLM:
                                     clean_text = "DDU IT placement details: average package is 6 LPA, highest package is 24 LPA off-campus, with 200 placed students. Top recruiters include TCS, Infosys, Crest Data Systems, and TatvaSoft."
                             else:
                                 if turn_lang == "gu":
-                                    clean_text = "હું તમને એડમિશન, અભ્યાસક્રમ અથવા વિદ્યાર્થી રેકોર્ડ્સ વિશે શું માહિતી આપું?"
+                                    clean_text = "હું તમને એડમિશન પાત્રતા, ફી માળખું, સેમેસ્ટર વિષયો, ગેટ વિષયો અથવા પ્લેસમેન્ટ વિશે શું માહિતી આપું?"
                                 elif turn_lang == "hi":
-                                    clean_text = "मैं आपको प्रवेश, पाठ्यक्रम या छात्र रिकॉर्ड के बारे में क्या जानकारी दे सकती हूँ?"
+                                    clean_text = "मैं आपको प्रवेश पात्रता, फीस संरचना, सेमेस्टर विषय, गेट विषय या प्लेसमेंट के बारे में क्या जानकारी दूँ?"
                                 else:
-                                    clean_text = "How may I assist you with admissions, curriculum, or student records?"
+                                    clean_text = "How may I assist you with admission eligibility, fees structure, semester subjects, GATE subjects, or placements?"
                             yield clean_text
 
                         clean_history_text = clean_text
@@ -1100,7 +1116,28 @@ class LLM:
                             turn_lang, _, _ = self.detect_turn_language(user_text, fallback_lang=self.current_lang)
                             lower_u = user_text.lower()
                             sem_detected = extract_semester(user_text)
-                            if any(w in lower_u for w in ["સેમેસ્ટર", "સેમ", "સિલેબસ", "અભ્યાસક્રમ", "વિષય", "semester", "syllabus", "subject"]) or sem_detected:
+                            if any(w in lower_u for w in ["admission", "admissions", "eligible", "eligibility", "criteria", "એડમિશન", "પ્રવેશ", "પાત્રતા", "લાયકાત", "प्रवेश"]):
+                                if turn_lang == "gu":
+                                    clean_text = "ડીડીયુ બીટેક આઈટીમાં પ્રવેશ માટે ૧૨ સાયન્સ પીસીએમમાં ઓછામાં ઓછા ૬૦% ગુણ, ગુજકેટ પરીક્ષા અને એસીપીસી મેરિટ રેન્ક જરૂરી છે."
+                                elif turn_lang == "hi":
+                                    clean_text = "डीडीयू बी.टेक आईटी में प्रवेश के लिए 12वीं साइंस पीसीएम में न्यूनतम 60% अंक, वैध गुजकेट स्कोर और एसीपीसी मेरिट रैंक आवश्यक है।"
+                                else:
+                                    clean_text = "DDU B.Tech IT admission requires 12th Science PCM with minimum 60% aggregate, a valid GUJCET score, and ACPC merit counseling rank."
+                            elif any(w in lower_u for w in ["fee", "fees", "cost", "ફી", "ખર્ચ", "फी", "फीस"]):
+                                if turn_lang == "gu":
+                                    clean_text = "ડીડીયુ બીટેક આઈટીમાં પ્રથમ વર્ષની ફી ૧,૬૬,૯૫૦ રૂપિયા અને બીજાથી ચોથા વર્ષ માટે વાર્ષિક ૧,૫૨,૦૦૦ રૂપિયા છે."
+                                elif turn_lang == "hi":
+                                    clean_text = "डीडीयू बी.टेक आईटी में प्रथम वर्ष की फीस 1,66,950 रुपये और दूसरे से चौथे वर्ष के लिए 1,52,000 रुपये प्रति वर्ष है।"
+                                else:
+                                    clean_text = "DDU B.Tech IT first year fee is 1,66,950 rupees and second to fourth year fee is 1,52,000 rupees per year."
+                            elif any(w in lower_u for w in ["gate", "ગેટ", "गेट"]):
+                                if turn_lang == "gu":
+                                    clean_text = "ડીડીયુ આઈટી અભ્યાસક્રમમાં ગેટના તમામ વિષયો જેમ કે મેથેમેટિક્સ, ડિજિટલ લોજિક, સીઓએ, ડેટા સ્ટ્રક્ચર્સ, એલ્ગોરિધમ્સ, ઓએસ, ડીબીએમએસ અને કમ્પ્યુટર નેટવર્ક્સ સંપૂર્ણપણે આવરી લેવામાં આવ્યા છે."
+                                elif turn_lang == "hi":
+                                    clean_text = "डीडीयू आईटी पाठ्यक्रम में गेट के सभी 12 विषय जैसे इंजीनियरिंग मैथमेटिक्स, डिजिटल लॉजिक, COA, डेटा स्ट्रक्चर्स, एल्गोरिदम, OS, DBMS और कंप्यूटर नेटवर्क शामिल हैं।"
+                                else:
+                                    clean_text = "DDU IT curriculum covers all 12 GATE subjects including Engineering Mathematics, Digital Logic, COA, Programming & Data Structures, Algorithms, OS, DBMS, and Networks."
+                            elif any(w in lower_u for w in ["સેમેસ્ટર", "સેમ", "સિલેબસ", "અભ્યાસક્રમ", "વિષય", "semester", "syllabus", "subject"]) or sem_detected:
                                 sem_target = sem_detected if sem_detected else 1
                                 if turn_lang == "gu":
                                     clean_text = f"ડીડીયુ આઈટી સેમેસ્ટર {sem_target} નો સંપૂર્ણ અભ્યાસક્રમ ઉપલબ્ધ છે. શું તમારે ચોક્કસ વિષય વિશે જાણવું છે?"
@@ -1108,13 +1145,6 @@ class LLM:
                                     clean_text = f"डीडीयू आईटी सेमेस्टर {sem_target} का संपूर्ण पाठ्यक्रम उपलब्ध है। क्या आप किसी विशेष विषय के बारे में जानना चाहते हैं?"
                                 else:
                                     clean_text = f"DDU IT Semester {sem_target} full curriculum is available. Would you like details on specific subjects?"
-                            elif any(w in lower_u for w in ["fee", "fees", "ફી", "ખર્ચ", "फी", "फीस"]):
-                                if turn_lang == "gu":
-                                    clean_text = "ડીડીયુ બીટેક પ્રથમ વર્ષની વાર્ષિક ટ્યુશન ફી ૧,૬૬,૯૫૦ રૂપિયા અને બીજાથી ચોથા વર્ષ માટે ૧,૫૨,૦૦૦ રૂપિયા છે, જ્યારે એમટેક પ્રથમ વર્ષની ફી ૫૫,૧૨૫ રૂપિયા છે."
-                                elif turn_lang == "hi":
-                                    clean_text = "डीडीयू बी.टेक प्रथम वर्ष की वार्षिक ट्यूशन फीस 1,66,950 रुपये और 2nd से 4th वर्ष के लिए 1,52,000 रुपये है, जबकि एम.टेक प्रथम वर्ष की 55,125 रुपये है।"
-                                else:
-                                    clean_text = "DDU B.Tech first year annual fee is 1,66,950 rupees, and second to fourth year is 1,52,000 rupees per year. M.Tech first year is 55,125 rupees per year."
                             elif any(w in lower_u for w in ["placement", "પ્લેસમેન્ટ", "प्लेसमेंट", "salary", "package"]):
                                 if turn_lang == "gu":
                                     clean_text = "ડીડીયુ આઈટીમાં સરેરાશ પેકેજ ૬ લાખ (6 LPA), સૌથી વધુ પેકેજ ૨૪ લાખ ઓફ-કેમ્પસ (24 LPA) છે અને ૨૦૦ વિદ્યાર્થીઓ પ્લેસ થયા છે. મુખ્ય રિક્રૂટર્સ TCS, Infosys, Crest Data Systems અને TatvaSoft છે."
@@ -1124,11 +1154,11 @@ class LLM:
                                     clean_text = "DDU IT placement details: average package is 6 LPA, highest package is 24 LPA off-campus, with 200 placed students. Top recruiters include TCS, Infosys, Crest Data Systems, and TatvaSoft."
                             else:
                                 if turn_lang == "gu":
-                                    clean_text = "હું તમને એડમિશન, અભ્યાસક્રમ અથવા વિદ્યાર્થી રેકોર્ડ્સ વિશે શું માહિતી આપું?"
+                                    clean_text = "હું તમને એડમિશન પાત્રતા, ફી માળખું, સેમેસ્ટર વિષયો, ગેટ વિષયો અથવા પ્લેસમેન્ટ વિશે શું માહિતી આપું?"
                                 elif turn_lang == "hi":
-                                    clean_text = "मैं आपको प्रवेश, पाठ्यक्रम या छात्र रिकॉर्ड के बारे में क्या जानकारी दे सकती हूँ?"
+                                    clean_text = "मैं आपको प्रवेश पात्रता, फीस संरचना, सेमेस्टर विषय, गेट विषय या प्लेसमेंट के बारे में क्या जानकारी दूँ?"
                                 else:
-                                    clean_text = "How may I assist you with admissions, curriculum, or student records?"
+                                    clean_text = "How may I assist you with admission eligibility, fees structure, semester subjects, GATE subjects, or placements?"
                             yield clean_text
 
                         clean_history_text = clean_text

@@ -450,6 +450,8 @@ class WebVoiceSession:
             self.sm.close()
 
         async def _handle_silence_check(check_num: int, prompt_text: str, lang: str):
+            if not prompt_text or not prompt_text.strip():
+                return
             cur_l = getattr(self.llm, "current_lang", "gu")
             bcp47 = "hi-IN" if cur_l == "hi" else ("en-IN" if cur_l == "en" else "gu-IN")
             self.llm.record_silence_event(check_num, prompt_text)
@@ -1241,6 +1243,8 @@ async def websocket_vobiz_endpoint(websocket: WebSocket):
 
     async def handle_vobiz_silence_check(check_num: int, prompt_text: str, lang: str):
         """Plays exact silence prompt and logs telephony system event."""
+        if not prompt_text or not prompt_text.strip():
+            return
         bcp47_code = "hi-IN" if lang == "hi" else ("en-IN" if lang == "en" else "gu-IN")
         llm.record_silence_event(check_num, prompt_text)
         if call_id:

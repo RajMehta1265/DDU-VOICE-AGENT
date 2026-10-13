@@ -152,7 +152,10 @@ def get_system_prompt(active_domains: Optional[list[str]] = None) -> str:
         parts.append(f"- GUJCET Result: {elig.get('entrance_exams', '')}")
         parts.append(f"- GUJCET Merit Rank: {elig.get('merit_counseling', '')}")
         fees = adm.get("fees_structure", {})
-        parts.append(f"- Fees Structure: 1st Year (Admission): {fees.get('first_year_fee', '')}; Subsequent Years (2nd, 3rd, 4th): {fees.get('subsequent_years_fee', '')}.")
+        parts.append("")
+        parts.append("FEES STRUCTURE DETAILS:")
+        parts.append(f"- 1st Year Fee (Admission Year): {fees.get('first_year_fee', '')}")
+        parts.append(f"- 2nd, 3rd, and 4th Year Fee: {fees.get('subsequent_years_fee', '')}")
         parts.append(f"- Course Duration: {fees.get('course_duration', '4 years (8 semesters)')}")
 
     # Complete Curriculum Knowledge (Semesters 1 to 8)

@@ -118,11 +118,11 @@ AGENT_FAREWELL_PATTERNS = [
 
 COMPILED_AGENT_FAREWELL_REGEX = [re.compile(p, re.IGNORECASE) for p in AGENT_FAREWELL_PATTERNS]
 
-# Standard silence check prompts when caller is inactive > 7s
+# Standard silence check prompts (disabled per user instruction: remove 'kya aap line par hai')
 SILENCE_CHECK_PROMPTS = {
-    "gu": "શું તમે લાઇન પર છો?",
-    "hi": "क्या आप लाइन पर हैं?",
-    "en": "Are you there on the line?",
+    "gu": "",
+    "hi": "",
+    "en": "",
 }
 
 # Standard closing farewells when hangup requested or inactivity concludes
@@ -356,11 +356,11 @@ def clean_speech_text(text: str) -> str:
     return cleaned
 
 
-# Standard hold phrases across Gujarati, Hindi, and English for DB & RAG lookups
+# Standard hold phrases disabled (prompt knowledge is instant, no line hold needed)
 HOLD_PHRASES: dict[str, str] = {
-    "gu": "કૃપા કરીને લાઇન પર રહો.",
-    "hi": "कृपया लाइन पर बने रहें।",
-    "en": "Please stay on the line.",
+    "gu": "",
+    "hi": "",
+    "en": "",
 }
 
 # Regex to detect and strip duplicate hold phrases produced by LLMs
