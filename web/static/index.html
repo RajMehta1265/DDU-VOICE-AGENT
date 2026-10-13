@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="UniVoice Campus Desk — admissions, student records and campus help by voice or text in English, Hindi and Gujarati."
+    />
+    <title>UniVoice Campus Desk</title>
+    <link rel="stylesheet" href="/static/style.css?v=5.0" />
+  </head>
+  <body>
+    <a class="skip-link" href="#app-main">Skip to main content</a>
+
+    <div class="app">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-inner">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">U</div>
+            <div class="brand-text">
+              <p class="brand-name">UniVoice Campus Desk</p>
+              <p class="brand-sub">University help portal</p>
+            </div>
+          </div>
+
+          <nav class="nav" aria-label="Portal sections" role="tablist">
+            <button
+              class="tab-btn active"
+              data-tab="voice"
+              role="tab"
+              id="tabbtn-voice"
+              aria-selected="true"
+              aria-controls="tab-voice"
+            >
+              Ask
+            </button>
+            <button
+              class="tab-btn"
+              data-tab="rag"
+              role="tab"
+              id="tabbtn-rag"
+              aria-selected="false"
+              aria-controls="tab-rag"
+              tabindex="-1"
+            >
+              Documents
+            </button>
+            <button
+              class="tab-btn"
+              data-tab="database"
+              role="tab"
+              id="tabbtn-database"
+              aria-selected="false"
+              aria-controls="tab-database"
+              tabindex="-1"
+            >
+              Records
+            </button>
+            <button
+              class="tab-btn"
+              data-tab="diagnostics"
+              role="tab"
+              id="tabbtn-diagnostics"
+              aria-selected="false"
+              aria-controls="tab-diagnostics"
+              tabindex="-1"
+            >
+              System
+            </button>
+          </nav>
+
+          <div class="header-meta">
+            <div class="lang-wrap">
+              <label class="lang-label" for="languageSelect">Language</label>
+              <select id="languageSelect" class="lang-select">
+                <option value="gu-IN" selected>Gujarati (ગુજરાતી)</option>
+                <option value="hi-IN">Hindi (हिंदी)</option>
+                <option value="en-IN">English</option>
+              </select>
+            </div>
+            <button
+              id="openPhoneSimBtn"
+              class="link-btn"
+              title="Preview a practice call"
+            >
+              Practice call
+            </button>
+            <button
+              id="themeToggle"
+              class="icon-btn"
+              title="Toggle dark theme"
+            >
+              Dark
+            </button>
+            <div
+              class="status"
+              id="wsStatusBadge"
+              role="status"
+              aria-live="polite"
+            >
+              <span class="status-dot" aria-hidden="true"></span>
+              <span class="status-text">Connecting…</span>
+            </div>
+          </div>
+        </div>
+        <div class="header-sub">
+          <span>Mon–Sat, 9:00–18:00 IST</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>English · Hindi · Gujarati</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>Voice + text</span>
+        </div>
+      </header>
+
+      <main class="main" id="app-main">
+        <!-- TAB 1 : Voice -->
+        <section
+          id="tab-voice"
+          class="tab-pane active"
+          role="tabpanel"
+          aria-label="Ask by voice or text"
+          aria-labelledby="tabbtn-voice"
+        >
+          <div class="page-head">
+            <div>
+              <p class="kicker">No login needed</p>
+              <h1 class="title">Admissions, fees, results and hostel rules.</h1>
+              <p class="lede">
+                Speak into the microphone or type below. Answers come from
+                official student records and uploaded university documents, in
+                your language.
+              </p>
+            </div>
+            <ol class="steps" aria-label="How it works">
+              <li><span class="step-n">1</span> Start call, allow mic once</li>
+              <li><span class="step-n">2</span> Speak or type a question</li>
+              <li><span class="step-n">3</span> Read or hear the answer</li>
+            </ol>
+          </div>
+
+          <div class="voice-grid">
+            <div class="card voice-card">
+              <div class="card-top">
+                <span class="tag">Live session</span>
+                <span id="callDuration" class="timer" aria-label="Call duration"
+                  >00:00</span
+                >
+              </div>
+
+              <div class="mode-row" role="group" aria-label="Speaking mode">
+                <button id="modeAutoVadBtn" class="mode-btn active">
+                  Hands-free
+                </button>
+                <button id="modePttBtn" class="mode-btn">Hold to speak</button>
+              </div>
+
+              <div class="visual">
+                <canvas
+                  id="waveformCanvas"
+                  width="560"
+                  height="120"
+                  aria-hidden="true"
+                ></canvas>
+                <button
+                  class="mic-btn"
+                  id="micOrb"
+                  aria-label="Start or end voice call"
+                  title="Start or end voice call"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="22"
+                    height="22"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"
+                    />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="22" />
+                  </svg>
+                </button>
+              </div>
+
+              <p
+                id="agentStateText"
+                class="state"
+                role="status"
+                aria-live="polite"
+              >
+                Ready. Press Start call, then speak or type your question.
+              </p>
+
+              <div class="actions">
+                <button id="startCallBtn" class="btn btn-primary">
+                  Start voice call
+                </button>
+                <button
+                  id="pushToTalkBtn"
+                  class="btn"
+                  style="display: none"
+                  disabled
+                >
+                  Hold to speak
+                </button>
+                <button
+                  id="interruptBtn"
+                  class="btn"
+                  style="display: none"
+                  title="Stop the assistant and ask something else"
+                >
+                  Stop
+                </button>
+              </div>
+
+              <!-- Instant Text Question Bar -->
+              <div class="chat-input-row" style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; gap: 8px;">
+                <input
+                  type="text"
+                  id="textQueryInput"
+                  class="input"
+                  placeholder="Or type a question in Gujarati, Hindi, or English…"
+                  style="flex: 1; padding: 10px 14px; border-radius: var(--radius-sm, 8px); border: 1px solid var(--border); background: var(--surface); color: var(--ink); font-size: 0.92rem;"
+                  aria-label="Type your question"
+                />
+                <button id="sendTextQueryBtn" class="btn btn-primary" type="button" style="white-space: nowrap;">
+                  Ask
+                </button>
+              </div>
+
+              <!-- Live Conversation Transcript Stream -->
+              <div id="conversationStreamContainer" class="conversation-stream-container" style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="muted small" style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.72rem;">Live Conversation</span>
+                  <button id="clearConversationBtn" type="button" class="link-btn small" style="font-size: 0.75rem; padding: 2px 6px; cursor: pointer; background: none; border: none; color: var(--muted); text-decoration: underline;">Clear</button>
+                </div>
+                <div id="conversationFeed" class="conversation-feed" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 12px; background: var(--surface-hover, rgba(0,0,0,0.02)); border-radius: var(--radius-sm, 10px); border: 1px solid var(--border); font-size: 0.88rem;">
+                  <div class="msg-bubble assistant-bubble" style="display: flex; gap: 10px; align-items: flex-start;">
+                    <span style="background: var(--primary, #3b82f6); color: white; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">P</span>
+                    <div style="flex: 1; background: var(--surface); padding: 10px 14px; border-radius: 0 12px 12px 12px; border: 1px solid var(--border); line-height: 1.45; color: var(--ink);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-weight: 600; font-size: 0.78rem; color: var(--primary, #3b82f6);">Priya (DDU IT)</span>
+                        <span class="lang-tag" style="font-size: 0.68rem; background: var(--border); padding: 1px 6px; border-radius: 4px; color: var(--muted);">ગુજરાતી</span>
+                      </div>
+                      <span class="bubble-text">નમસ્તે, હું ડીડીયુ આઈટી ડિપાર્ટમેન્ટમાંથી પ્રિયા વાત કરું છું. હું તમારી શું મદદ કરી શકું? તમે ગુજરાતી, હિન્દી અથવા અંગ્રેજીમાં વાત કરી શકો છો.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="card history-card">
+              <div class="card-head">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2 class="h2" style="margin: 0;">Call History</h2>
+                    <span class="badge" id="callHistoryBadge" style="font-size: 0.72rem; padding: 2px 8px; border-radius: 9999px;">Recent 10 Calls</span>
+                  </div>
+                  <p class="muted" style="margin-top: 2px; font-size: 0.82rem;">Calls with attached dialogue transcripts from MongoDB.</p>
+                </div>
+                <button
+                  id="refreshCallsBtn"
+                  class="icon-btn"
+                  title="Refresh call history"
+                >
+                  Refresh
+                </button>
+              </div>
+              <div class="table-wrap history-table-wrap">
+                <table class="table history-table" id="callHistoryTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 32%;">Caller & Call ID</th>
+                      <th style="width: 20%;">Duration & Lang</th>
+                      <th style="width: 28%;">Inquiry Summary</th>
+                      <th style="width: 20%; text-align: right;">Transcript</th>
+                    </tr>
+                  </thead>
+                  <tbody id="callHistoryBody">
+                    <tr>
+                      <td colspan="4" class="muted" style="text-align: center; padding: 24px;">
+                        Loading recent calls from MongoDB...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="hint" style="margin-top: 10px; font-size: 0.78rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>Click any row or "View Transcript" to open full conversation dialogue.</span>
+                <span class="muted" id="transcriptSyncStatus">🍃 MongoDB Atlas</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2 : Documents -->
+        <section
+          id="tab-rag"
+          class="tab-pane"
+          role="tabpanel"
+          aria-label="Documents"
+          aria-labelledby="tabbtn-rag"
+        >
+          <div class="page-head">
+            <div>
+              <p class="kicker">Knowledge base · Official PDFs only</p>
+              <h1 class="title">Documents the assistant can quote.</h1>
+              <p class="lede">
+                Add prospectuses, hostel rulebooks or scholarship circulars.
+                They are indexed on this server and cited when parents ask.
+              </p>
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="stack">
+              <div class="card">
+                <h2 class="h2">Add a PDF</h2>
+                <p class="muted" style="margin-bottom: 14px">
+                  Text is extracted and indexed locally.
+                </p>
+                <div
+                  class="dropzone"
+                  id="pdfDropzone"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Upload a PDF document"
+                >
+                  <input type="file" id="pdfFileInput" accept=".pdf" hidden />
+                  <p class="drop-title">
+                    Drag and drop your PDF here, or
+                    <span class="browse">browse files</span>
+                  </p>
+                  <p class="muted small">
+                    PDF only · up to 50 MB · needs selectable text
+                  </p>
+                  <div
+                    class="progress"
+                    id="uploadProgressContainer"
+                    style="display: none"
+                  >
+                    <div class="progress-track">
+                      <div class="progress-fill" id="uploadProgressBar"></div>
+                    </div>
+                    <span class="muted small" id="uploadProgressText"
+                      >Reading and indexing…</span
+                    >
+                  </div>
+                </div>
+                <div
+                  id="uploadFeedback"
+                  class="feedback"
+                  style="display: none"
+                  role="status"
+                ></div>
+              </div>
+
+              <div class="card">
+                <h2 class="h2">Try the search</h2>
+                <p class="muted" style="margin-bottom: 14px">
+                  Preview which paragraph would be quoted.
+                </p>
+                <div class="row">
+                  <label class="sr-only" for="ragSearchInput"
+                    >Search documents</label
+                  >
+                  <input
+                    type="text"
+                    id="ragSearchInput"
+                    placeholder="e.g. scholarship eligibility"
+                    class="input"
+                  />
+                  <button id="ragSearchBtn" class="btn btn-primary">
+                    Search
+                  </button>
+                </div>
+                <div class="results" id="ragSearchResults">
+                  <div class="empty">
+                    <p class="empty-title">No search yet</p>
+                    <p class="muted small">
+                      Type above to preview matching paragraphs.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h2 class="h2">Indexed documents</h2>
+                  <p class="muted">Select Inspect to read paragraphs.</p>
+                </div>
+                <button
+                  id="refreshDocsBtn"
+                  class="icon-btn"
+                  title="Refresh list"
+                >
+                  Refresh
+                </button>
+              </div>
+              <div class="table-wrap">
+                <table class="table" id="documentsTable">
+                  <thead>
+                    <tr>
+                      <th scope="col">Document</th>
+                      <th scope="col">Uploaded</th>
+                      <th scope="col">Pages</th>
+                      <th scope="col">Paragraphs</th>
+                      <th scope="col"><span class="sr-only">Actions</span></th>
+                    </tr>
+                  </thead>
+                  <tbody id="documentsTableBody">
+                    <tr>
+                      <td colspan="5" class="muted">Loading documents…</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3 : Records -->
+        <section
+          id="tab-database"
+          class="tab-pane"
+          role="tabpanel"
+          aria-label="Records"
+          aria-labelledby="tabbtn-database"
+        >
+          <div class="page-head">
+            <div>
+              <p class="kicker">Official records · read-only for callers</p>
+              <h1 class="title">Students, placements and dates.</h1>
+              <p class="lede">
+                Staff view of the same data quoted on calls. Search a name to
+                verify marks before a meeting.
+              </p>
+            </div>
+            <div class="search-wrap">
+              <label class="sr-only" for="studentSearchInput"
+                >Search students, departments or programs</label
+              >
+              <input
+                type="search"
+                id="studentSearchInput"
+                class="input"
+                placeholder="Search name, ID, department…"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <div class="metrics" role="region" aria-label="Key numbers">
+            <div class="card metric">
+              <span class="metric-label">Enrolled students</span>
+              <span class="metric-val" id="metricStudents">—</span>
+              <span class="muted small">All departments</span>
+            </div>
+            <div class="card metric">
+              <span class="metric-label">Programs</span>
+              <span class="metric-val" id="metricPrograms">—</span>
+              <span class="muted small">Fees and deadlines</span>
+            </div>
+            <div class="card metric">
+              <span class="metric-label">Placement records</span>
+              <span class="metric-val" id="metricPlacements">—</span>
+              <span class="muted small">Highest and average CTC</span>
+            </div>
+            <div class="card metric">
+              <span class="metric-label">Indexed paragraphs</span>
+              <span class="metric-val" id="metricChunks">—</span>
+              <span class="muted small">From uploaded PDFs</span>
+            </div>
+          </div>
+
+          <div class="stack" style="margin-top: 16px">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h2 class="h2">Student directory</h2>
+                  <p class="muted">Marks and attendance as quoted on calls.</p>
+                </div>
+                <button
+                  id="openAddStudentModalBtn"
+                  class="btn btn-primary btn-sm"
+                >
+                  Add student
+                </button>
+              </div>
+              <div class="table-wrap">
+                <table class="table" id="studentsTable">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Department</th>
+                      <th scope="col">Sem</th>
+                      <th scope="col">Marks and attendance</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentsTableBody">
+                    <tr>
+                      <td colspan="5" class="muted">Loading students…</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="two-col">
+              <div class="card">
+                <div class="card-head">
+                  <div>
+                    <h2 class="h2">Placements</h2>
+                    <p class="muted">By department.</p>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="table" id="placementsTable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Dept</th>
+                        <th scope="col">Highest</th>
+                        <th scope="col">Average</th>
+                        <th scope="col">Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody id="placementsTableBody">
+                      <tr>
+                        <td colspan="4" class="muted">Loading placements…</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head">
+                  <div>
+                    <h2 class="h2">Admissions</h2>
+                    <p class="muted">Fees and last dates.</p>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table class="table" id="admissionsTable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Program</th>
+                        <th scope="col">Fee / year</th>
+                        <th scope="col">Last date</th>
+                      </tr>
+                    </thead>
+                    <tbody id="admissionsTableBody">
+                      <tr>
+                        <td colspan="3" class="muted">Loading programs…</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4 : System -->
+        <section
+          id="tab-diagnostics"
+          class="tab-pane"
+          role="tabpanel"
+          aria-label="System health"
+          aria-labelledby="tabbtn-diagnostics"
+        >
+          <div class="page-head">
+            <div>
+              <p class="kicker">For staff and support</p>
+              <h1 class="title">System status.</h1>
+              <p class="lede">
+                Ready means callers will get answers. If something needs
+                attention, the note below says what to do.
+              </p>
+            </div>
+          </div>
+          <div class="diag-grid">
+            <div class="card">
+              <div class="card-head">
+                <h2 class="h2">Answering engine</h2>
+                <span class="pill" id="diagLlmStatus">Checking…</span>
+              </div>
+              <dl class="kv">
+                <div>
+                  <dt>Provider</dt>
+                  <dd id="diagLlmProvider">—</dd>
+                </div>
+                <div>
+                  <dt>Model</dt>
+                  <dd id="diagLlmModel">—</dd>
+                </div>
+                <div>
+                  <dt>Lookup</dt>
+                  <dd>Marks + documents</dd>
+                </div>
+              </dl>
+              <p class="note">
+                If unavailable, answers may be slow. Check model key.
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2 class="h2">Voice</h2>
+                <span class="pill" id="diagSarvamStatus">Checking…</span>
+              </div>
+              <dl class="kv">
+                <div>
+                  <dt>Listen</dt>
+                  <dd id="diagSttModel">—</dd>
+                </div>
+                <div>
+                  <dt>Speak</dt>
+                  <dd id="diagTtsModel">—</dd>
+                </div>
+                <div>
+                  <dt>Languages</dt>
+                  <dd>English, Hindi, Gujarati</dd>
+                </div>
+              </dl>
+              <p class="note">
+                If unavailable, typing still works. Add a voice API key.
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2 class="h2">Student records</h2>
+                <span class="pill" id="diagDbStatus">Connected</span>
+              </div>
+              <dl class="kv">
+                <div>
+                  <dt>Storage</dt>
+                  <dd id="diagDbMode">—</dd>
+                </div>
+                <div>
+                  <dt>Backup</dt>
+                  <dd>Automatic fallback on</dd>
+                </div>
+              </dl>
+              <p class="note">Holds marks, attendance, fees, placements.</p>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h2 class="h2">Document memory</h2>
+                <span class="pill" id="diagRagStatus">Ready</span>
+              </div>
+              <dl class="kv">
+                <div>
+                  <dt>Indexed</dt>
+                  <dd id="diagRagChunks">0</dd>
+                </div>
+                <div>
+                  <dt>Source</dt>
+                  <dd>Uploaded PDFs</dd>
+                </div>
+              </dl>
+              <p class="note">If 0, upload a prospectus in Documents.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>UniVoice Campus Desk · <span id="footerYear">2026</span></span>
+        <span class="muted"
+          >Verify critical dates with the admissions office.</span
+        >
+      </footer>
+    </div>
+
+    <!-- Modal: practice call -->
+    <div
+      id="phoneSimModal"
+      class="overlay"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Practice incoming call"
+    >
+      <div class="modal">
+        <p class="kicker">Practice call</p>
+        <h3 class="h2" id="simCallerName">Parent caller (demo)</h3>
+        <p class="muted">+91 98765 43210 · Wants CSE fees and marks</p>
+        <p class="note" style="margin-top: 12px">
+          Rehearsal screen for staff. Accept to open Ask and practice.
+        </p>
+        <div class="modal-actions">
+          <button id="declineCallBtn" class="btn">Decline</button>
+          <button id="acceptCallBtn" class="btn btn-primary">Accept</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: chunks -->
+    <div
+      id="chunkInspectorModal"
+      class="overlay"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Document paragraphs"
+    >
+      <div class="modal modal-wide">
+        <div class="card-head">
+          <div>
+            <h3 id="inspectorDocTitle" class="h2">Document paragraphs</h3>
+            <p id="inspectorDocSubtitle" class="muted small">
+              Indexed text the assistant can quote
+            </p>
+          </div>
+          <button id="closeInspectorBtn" class="icon-btn" aria-label="Close">
+            Close
+          </button>
+        </div>
+        <div class="results" id="inspectorChunksList" style="margin-top: 12px">
+          <div class="muted">Loading paragraphs…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: delete document confirmation -->
+    <div
+      id="deleteDocModal"
+      class="overlay"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Delete document"
+    >
+      <div class="modal" style="max-width: 440px">
+        <div class="card-head">
+          <div>
+            <h3 class="h2">Delete Document</h3>
+            <p class="muted small">Remove from vector memory</p>
+          </div>
+          <button id="closeDeleteModalBtn" class="icon-btn" aria-label="Close">
+            Close
+          </button>
+        </div>
+        <div style="margin: 16px 0">
+          <p style="font-size: 0.92rem; line-height: 1.45; color: var(--ink)">
+            Are you sure you want to permanently delete
+            <strong id="deleteDocName" style="color: var(--primary)"></strong>
+            from the knowledge base?
+          </p>
+          <p class="muted small" style="margin-top: 8px">
+            All vector chunks will be deleted. The assistant will no longer cite this document.
+          </p>
+        </div>
+        <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px">
+          <button id="cancelDeleteBtn" class="btn" type="button">Cancel</button>
+          <button id="confirmDeleteBtn" class="btn" type="button" style="background: #dc2626; color: white">
+            Delete permanently
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: add student -->
+    <div
+      id="addStudentModal"
+      class="overlay"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Add student"
+    >
+      <div class="modal modal-wide">
+        <div class="card-head">
+          <div>
+            <h3 class="h2">Add student</h3>
+            <p class="muted small">Askable by voice immediately</p>
+          </div>
+          <button id="closeAddStudentBtn" class="icon-btn" aria-label="Close">
+            Close
+          </button>
+        </div>
+        <form id="addStudentForm" class="form">
+          <div class="form-grid">
+            <div class="field">
+              <label for="newStuId">Student ID</label
+              ><input
+                type="text"
+                id="newStuId"
+                required
+                placeholder="e.g. STU104"
+                class="input"
+              />
+            </div>
+            <div class="field">
+              <label for="newStuName">Full name</label
+              ><input
+                type="text"
+                id="newStuName"
+                required
+                placeholder="e.g. Priya Sharma"
+                class="input"
+              />
+            </div>
+            <div class="field">
+              <label for="newStuDept">Department</label
+              ><select id="newStuDept" class="input">
+                <option value="CSE">Computer Science (CSE)</option>
+                <option value="ECE">Electronics (ECE)</option>
+                <option value="MECH">Mechanical (MECH)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="newStuSem">Semester</label
+              ><input
+                type="number"
+                id="newStuSem"
+                min="1"
+                max="8"
+                value="4"
+                class="input"
+              />
+            </div>
+            <div class="field span-2">
+              <label for="newStuPhone">Parent phone</label
+              ><input
+                type="text"
+                id="newStuPhone"
+                placeholder="+919876543299"
+                class="input"
+              />
+            </div>
+            <div class="field">
+              <label for="newStuSubject">Subject</label
+              ><input
+                type="text"
+                id="newStuSubject"
+                value="Machine Learning"
+                class="input"
+              />
+            </div>
+            <div class="field">
+              <label for="newStuMarks">Marks (out of 100)</label
+              ><input
+                type="number"
+                id="newStuMarks"
+                min="0"
+                max="100"
+                value="94"
+                class="input"
+              />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" id="cancelAddStudentBtn" class="btn">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: View Call Transcript (MongoDB) -->
+    <div
+      id="transcriptModal"
+      class="modal-backdrop"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="transcriptModalTitle"
+    >
+      <div class="modal modal-wide" style="max-width: 680px; max-height: 85vh; display: flex; flex-direction: column;">
+        <div class="modal-head" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
+          <div>
+            <h3 id="transcriptModalTitle" class="h3" style="margin: 0;">Call Transcript</h3>
+            <p id="transcriptModalMeta" class="muted small" style="margin: 4px 0 0 0;"></p>
+          </div>
+          <button id="closeTranscriptModalBtn" class="icon-btn" aria-label="Close">✕</button>
+        </div>
+        <div id="transcriptModalBody" style="overflow-y: auto; flex: 1; padding: 8px 0; display: flex; flex-direction: column; gap: 10px;">
+          <!-- Turns inserted dynamically -->
+        </div>
+        <div class="modal-actions" style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: flex-end;">
+          <button type="button" id="closeTranscriptModalActionBtn" class="btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/app.js?v=5.0"></script>
+  </body>
+</html>

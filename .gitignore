@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.env
+
+# Local Databases & Vector Stores
+db/university.db
+db/chroma_db/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite3
+
+# Cache & system files
+.cache/
+.DS_Store

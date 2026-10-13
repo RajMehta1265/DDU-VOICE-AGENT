@@ -1,0 +1,125 @@
+# Voice Agent — Architecture Diagrams (University Admission & Student Desk)
+
+---
+
+## 1. High-Level System Architecture
+
+```mermaid
+flowchart TB
+    classDef telephony fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+    classDef gateway fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1
+    classDef stt fill:#fff3e0,stroke:#e65100,stroke-width:1.5px,color:#bf360c
+    classDef llm fill:#f3e5f5,stroke:#6a1b9a,stroke-width:1.5px,color:#4a148c
+    classDef rag fill:#fce4ec,stroke:#c62828,stroke-width:1.5px,color:#b71c1c
+    classDef tts fill:#e0f7fa,stroke:#00695c,stroke-width:1.5px,color:#004d40
+    classDef storage fill:#f5f5f5,stroke:#616161,stroke-dasharray:5 5,color:#424242
+    classDef web fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#f57f17
+
+    subgraph Callers ["Parents & Students"]
+        Caller1([Caller A — Hindi Parent])
+        Caller2([Caller B — Gujarati Parent])
+        Caller3([Caller C — English Student])
+    end
+    class Caller1,Caller2,Caller3 telephony
+
+    subgraph Telephony ["WebSocket Call Connection"]
+        WSGateway["WebSocket Gateway / Media Gateway\n(ws://host:8765)"]
+    end
+    class WSGateway gateway
+
+    subgraph Cloud ["Voice Agent Backend"]
+
+        subgraph Pipeline ["Voice Agent Pipeline"]
+            direction TB
+
+            subgraph STT_Layer ["STT — Multi-language"]
+                SarvamSTT["sarvam\n(EN · HI · GU)"]
+            end
+            class SarvamSTT stt
+
+            subgraph LLM_Layer ["LLM Engine & Tool Agent"]
+                Qwen["Qwen 2.5 : 3B\n(via Ollama)"]
+                ToolAgent["Tool Calling Agent\n(University Desk)"]
+            end
+            class Qwen,ToolAgent llm
+
+            subgraph TTS_Layer ["TTS — Multi-language"]
+                SarvamTTS["sarvam\n(EN · HI · GU)"]
+            end
+            class SarvamTTS tts
+        end
+
+        subgraph DB_Infra ["University Database Layer"]
+            PostgresDB[("PostgreSQL Database\n(Students, Marks,\nAttendance, Placements,\nAdmissions)")]
+        end
+        class PostgresDB storage
+
+        subgraph RAG_Infra ["RAG Infrastructure (Docs)"]
+            VectorDB[("Vector Store\n(Admission Prospectus,\nFee Structures)")]
+            Embeddings["Embedding Model"]
+        end
+        class VectorDB,Embeddings rag
+    end
+
+    %% ===== Connections =====
+
+    Caller1 & Caller2 & Caller3 -- "WebSockets Call Stream" --> WSGateway
+    WSGateway -- "Audio Stream (16kHz PCM/WAV)" --> SarvamSTT
+    SarvamSTT -- "Transcribed Text + Language Tag" --> ToolAgent
+
+    ToolAgent -- "Query Database Tools" --> PostgresDB
+    ToolAgent -- "Retrieve Policy Chunks" --> VectorDB
+    ToolAgent -- "Augmented Prompt" --> Qwen
+
+    Qwen -- "Spoken Text Response" --> SarvamTTS
+    SarvamTTS -- "Synthesized Audio Stream" --> WSGateway
+    WSGateway -- "Audio Response Stream" --> Caller1 & Caller2 & Caller3
+```
+
+---
+
+## 2. Call Interaction Flow — Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Parent as Parent / Student
+    participant WS as WebSocket Gateway
+    participant STT as STT (sarvam)
+    participant Agent as LLM Agent (Qwen 2.5:3B)
+    participant DB as PostgreSQL Database
+    participant TTS as TTS (sarvam)
+
+    rect rgb(232, 245, 233)
+        Note over Parent, WS: Phase 1 — WebSocket Call Connection
+        Parent->>WS: Connect via ws://host:8765
+        WS-->>Parent: Connection Established
+    end
+
+    rect rgb(227, 242, 253)
+        Note over Parent, STT: Phase 2 — Speech Recognition
+        Parent->>WS: Send Audio Stream (PCM / WAV)
+        WS->>STT: Forward Audio Stream
+        STT->>STT: Transcribe Audio & Detect Language (HI / GU / EN)
+        STT-->>Agent: Transcribed Text ("Check marks for Aarav Patel")
+    end
+
+    rect rgb(243, 229, 245)
+        Note over Agent, DB: Phase 3 — Tool Calling & DB Querying
+        Agent->>Agent: Determine Tool Call: lookup_student("Aarav Patel")
+        Agent->>DB: Query Student ID
+        DB-->>Agent: Returns Student Record (ID: STU101)
+        Agent->>Agent: Determine Tool Call: get_student_marks("STU101")
+        Agent->>DB: Query Marks & Grades
+        DB-->>Agent: Returns Subject Marks (DSA: 88, DBMS: 92, OS: 79)
+        Agent->>Agent: Generate Natural Spoken Answer
+    end
+
+    rect rgb(224, 247, 250)
+        Note over Agent, Parent: Phase 4 — Speech Synthesis & Audio Delivery
+        Agent->>TTS: Text Response + Language Code (hi-IN / gu-IN / en-IN)
+        TTS->>TTS: Synthesize Audio Chunks
+        TTS-->>WS: Return Audio Bytes
+        WS-->>Parent: Stream Audio Response to Caller
+    end
+```

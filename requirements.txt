@@ -1,0 +1,34 @@
+# ==============================================================================
+# Voice Agent Project Dependencies
+# ==============================================================================
+
+# Web Framework & Server
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+websockets>=12.0
+python-multipart>=0.0.9
+
+# Audio & Speech Processing (STT / TTS)
+sarvamai==0.1.31a4
+faster-whisper>=1.2.1
+sounddevice>=0.4.6
+soundfile>=0.12.1
+scipy>=1.18.1
+edge-tts>=6.1.0
+
+# LLM & Networking
+httpx>=0.27.0
+requests>=2.31.0
+
+# Vector & Math
+numpy>=1.26.0
+
+# Database & Storage (PostgreSQL, MongoDB)
+psycopg2-binary>=2.9.9
+psycopg>=3.1.0
+pymongo>=4.8.0
+dnspython>=2.6.0
+
+# Configuration & Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0.0
